@@ -27,6 +27,7 @@ curves/
 plots/
 points2plane/
 data/
+evals/
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
