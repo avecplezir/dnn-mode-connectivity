@@ -50,7 +50,7 @@ parser.add_argument('--init_linear_off', dest='init_linear', action='store_false
 parser.add_argument('--resume', type=str, default=None, metavar='CKPT',
                     help='checkpoint to resume training from (default: None)')
 
-parser.add_argument('--epochs', type=int, default=200, metavar='N',
+parser.add_argument('--epochs', type=int, default=100, metavar='N',
                     help='number of epochs to train (default: 200)')
 parser.add_argument('--save_freq', type=int, default=50, metavar='N',
                     help='save frequency (default: 50)')

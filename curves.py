@@ -306,7 +306,7 @@ class CurveNet(Module):
         self.l2 = sum(module.l2 for module in self.curve_modules)
 
     def forward(self, input, t=None):
-        if t is None:
+        if t is  None:
             t = input.data.new(1).uniform_()
         coeffs_t = self.coeff_layer(t)
         output = self.net(input, coeffs_t)

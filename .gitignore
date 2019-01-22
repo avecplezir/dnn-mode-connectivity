@@ -23,6 +23,10 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
+curves/
+plots/
+points2plane/
+data/
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
