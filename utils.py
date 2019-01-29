@@ -40,6 +40,24 @@ def save_checkpoint(dir, epoch, name='checkpoint', **kwargs):
     torch.save(state, filepath)
 
 
+def rescaled_shift(model, criterion, regularizer=None):
+    print("initial rescaling...")
+
+    w = list()
+    curve_parameters = list(model.net.parameters())
+    cum_l = 1.0
+
+    for ind, (p1, p2, p3) in enumerate(zip(curve_parameters[0::2], curve_parameters[2::2]), curve_parameters[1::2]):
+
+        if ind!=len(curve_parameters[0::2]):
+            l = p1@p2/(p1@p1)
+            cum_l = cum_l/l
+            print('l', l)
+            p3.copy(l*p1)
+
+
+
+
 def train(train_loader, model, optimizer, criterion, regularizer=None, lr_schedule=None):
     loss_sum = 0.0
     correct = 0.0

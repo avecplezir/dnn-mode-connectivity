@@ -9,8 +9,7 @@ import data
 import models
 import curves
 import utils
-
-ckpt = 'curves/curve13/checkpoint-100.pt'
+import pickle
 
 loaders, num_classes = data.loaders(
     "CIFAR10",
@@ -21,39 +20,34 @@ loaders, num_classes = data.loaders(
     False)
 
 architecture = getattr(models, "VGG16")
-curve = getattr(curves, 'PolyChain')
 
-model = curves.CurveNet(
-            10,
-            curve,
-            architecture.curve,
-            3,
-            True,
-            True,
-            architecture_kwargs=architecture.kwargs,
-            )
-
-
-has_bn = utils.check_bn(model)
-test_res = {'loss': None, 'accuracy': None, 'nll': None}
+model = architecture.base(num_classes=10, **architecture.kwargs)
+model.cuda()
 
 criterion = F.cross_entropy
 regularizer = utils.l2_regularizer(1e-4)
 
+statistic = []
 
-checkpoint = torch.load(ckpt)
-model.load_state_dict(checkpoint['model_state'])
+for i in range(1, 44):
+    ckpt = 'curves/curve'+str(i)+'/checkpoint-100.pt'
 
-train_res = utils.test(loaders['train'], model, criterion, regularizer)
-test_res = utils.test(loaders['test'], model, criterion, regularizer)
+    checkpoint = torch.load(ckpt)
+    model.load_state_dict(checkpoint['model_state'])
 
-values = [epoch, lr, train_res['loss'], train_res['accuracy'], test_res['nll'],
-          test_res['accuracy'], time_ep]
+    train_res = utils.test(loaders['train'], model, criterion, regularizer)
+    test_res = utils.test(loaders['test'], model, criterion, regularizer)
 
-table = tabulate.tabulate([values], columns, tablefmt='simple', floatfmt='9.4f')
-if epoch % 40 == 1 or epoch == start_epoch:
-    table = table.split('\n')
-    table = '\n'.join([table[1]] + table)
-else:
-    table = table.split('\n')[2]
-print(table)
+    columns = ['model', 'tr_loss', 'tr_acc', 'te_nll', 'te_acc']
+
+    values = [i, train_res['loss'], train_res['accuracy'], test_res['nll'],
+              test_res['accuracy']]
+
+    table = tabulate.tabulate([values], columns, tablefmt='simple', floatfmt='9.4f')
+
+    print(table)
+
+    statistic.append(values)
+
+
+pickle.dump( statistic, open( "stats/point_stat.p", "wb"))
