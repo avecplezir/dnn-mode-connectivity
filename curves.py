@@ -295,6 +295,40 @@ class CurveNet(Module):
                 alpha = j * 1.0 / (self.num_bends - 1)
                 weights[j].data.copy_(alpha * weights[-1].data + (1.0 - alpha) * weights[0].data)
 
+    def init_rescale(self):
+        curve_parameters = list(self.net.parameters())
+        cum_l = 1.0
+
+        for ind, (p1, p2, p3) in enumerate(zip(curve_parameters[0::2], curve_parameters[2::2]), curve_parameters[1::2]):
+            if ind != len(curve_parameters[0::2]):
+                l = p1 @ p2 / (p1 @ p1)
+                cum_l = cum_l / l
+                print('l ', l)
+                p3.copy(l * p1)
+            else:
+                print('cum_l ', ind,  ' ', cum_l)
+                p3.copy(cum_l*p1)
+
+        w = list()
+        curve_parameters = list(self.net.parameters())
+        for i in range(3):
+            w.append(np.concatenate([
+                p.data.cpu().numpy().ravel() for p in curve_parameters[i::2]
+            ]))
+
+        print("distance: ")
+        u = w[2] - w[0]
+        dx = np.linalg.norm(u)
+        print('20', u)
+
+        u = w[1] - w[0]
+        dx = np.linalg.norm(u)
+        print('10', u)
+
+        u = w[1] - w[2]
+        dx = np.linalg.norm(u)
+        print('12', u)
+
     def weights(self, t):
         coeffs_t = self.coeff_layer(t)
         weights = []
