@@ -117,7 +117,7 @@ else:
         if args.init_linear:
             print('Linear initialization.')
             model.init_linear()
-        if args.rescale_init:
+        if args.init_rescale:
             print('Rescale initialization.')
             model.init_rescale()
 
