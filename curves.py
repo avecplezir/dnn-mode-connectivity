@@ -316,6 +316,7 @@ class CurveNet(Module):
                       0.,
                       -(p2.view(-1) @ p2.view(-1)).data.numpy(), (p3.view(-1)@p2.view(-1)).data.numpy(),])
 
+
             print('roots ', r)
             print('real ', r[np.imag(r) == 0])
 
