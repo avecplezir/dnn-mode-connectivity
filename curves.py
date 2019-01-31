@@ -304,7 +304,7 @@ class CurveNet(Module):
         for p1, p2 in zip(curve_parameters[0::3], curve_parameters[1::3]):
             p2.data.copy_(p1.data)
 
-        for i in range(3, 6, 3): #int(len(curve_parameters)/3)
+        for i in range(3, int(len(curve_parameters)/3), 3): #int(len(curve_parameters)/3)
 
             (p2, p3) = curve_parameters[i+1], curve_parameters[i+2]
             (pp2, pp3) = curve_parameters[i-2], curve_parameters[i-1]
