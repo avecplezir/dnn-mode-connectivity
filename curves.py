@@ -6,6 +6,9 @@ from torch.nn import Module, Parameter
 from torch.nn.modules.utils import _pair
 from scipy.special import binom
 
+from scipy import optimize
+import scipy
+
 
 class Bezier(Module):
     def __init__(self, num_bends):
@@ -297,37 +300,65 @@ class CurveNet(Module):
 
     def init_rescale(self):
         curve_parameters = list(self.net.parameters())
-        cum_l = 1.0
 
-        for ind, (p1, p2, p3) in enumerate(zip(curve_parameters[0::2], curve_parameters[2::2]), curve_parameters[1::2]):
-            if ind != len(curve_parameters[0::2]):
-                l = p1 @ p2 / (p1 @ p1)
-                cum_l = cum_l / l
-                print('l ', l)
-                p3.copy(l * p1)
-            else:
-                print('cum_l ', ind,  ' ', cum_l)
-                p3.copy(cum_l*p1)
+        for p1, p2 in zip(curve_parameters[0::3], curve_parameters[1::3]):
+            p2.data.copy_(p1.data)
+
+        for i in range(3, 6, 3): #int(len(curve_parameters)/3)
+
+            (p2, p3) = curve_parameters[i+1], curve_parameters[i+2]
+            (pp2, pp3) = curve_parameters[i-2], curve_parameters[i-1]
+
+            print('ind', i)
+            print('shapes ', p2.shape, ' ', p3.shape, ' ', pp2.shape, ' ', pp3.shape)
+
+            r = np.roots([(pp2.view(-1) @ pp2.view(-1)).data.numpy(), -(pp2.view(-1) @ pp3.view(-1)).data.numpy(),
+                      0.,
+                      -(p2.view(-1) @ p2.view(-1)).data.numpy(), (p3.view(-1)@p2.view(-1)).data.numpy(),])
+
+            print('roots ', r)
+            print('real ', r[np.imag(r) == 0])
+
+            l = np.real(r[np.imag(r) == 0][0])
+
+            print('l ', l)
+
+            pp2.data.copy_(l*pp2.data)
+            p2.data.copy_(1/l*p2.data)
+
+
+        # for ind, (p1, p2, p3) in enumerate(zip(curve_parameters[3::3], curve_parameters[4::3], curve_parameters[5::3])):
+        #     if ind != (len(curve_parameters[0::3]) - 1):
+        #         print('ind', ind)
+        #         print('shapes ', p1.shape, ' ', p2.shape)
+        #         l = p1.view(-1) @ p2.view(-1) / (p1.view(-1) @ p1.view(-1))
+        #         cum_l = cum_l / l
+        #         print('l shape ', l.shape)
+        #         print('l ', l)
+        #         p3.data.copy_(l * p1.data)
+        #     else:
+        #         print('cum_l ', ind, ' ', cum_l)
+        #         p3.data.copy_(cum_l * p1.data)
 
         w = list()
         curve_parameters = list(self.net.parameters())
         for i in range(3):
             w.append(np.concatenate([
-                p.data.cpu().numpy().ravel() for p in curve_parameters[i::2]
+                p.data.cpu().numpy().ravel() for p in curve_parameters[i::3]
             ]))
 
         print("distance: ")
         u = w[2] - w[0]
         dx = np.linalg.norm(u)
-        print('20', u)
+        print('20', dx)
 
         u = w[1] - w[0]
         dx = np.linalg.norm(u)
-        print('10', u)
+        print('10', dx)
 
         u = w[1] - w[2]
         dx = np.linalg.norm(u)
-        print('12', u)
+        print('12', dx)
 
     def weights(self, t):
         coeffs_t = self.coeff_layer(t)
