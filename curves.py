@@ -312,9 +312,10 @@ class CurveNet(Module):
             print('ind', i)
             print('shapes ', p2.shape, ' ', p3.shape, ' ', pp2.shape, ' ', pp3.shape)
 
-            r = np.roots([(pp2.view(-1)@pp2.view(-1)).data.numpy(), (pp2.view(-1)@pp2.view(-1)).data.numpy(),
+            r = np.roots([(pp2.view(-1) @ pp2.view(-1)).data.numpy(), -(pp2.view(-1) @ pp3.view(-1)).data.numpy(),
                       0.,
-                      (p3.view(-1)@p2.view(-1)).data.numpy(), (p2.view(-1) @ p2.view(-1)).data.numpy()])
+                      -(p2.view(-1) @ p2.view(-1)).data.numpy(), (p3.view(-1)@p2.view(-1)).data.numpy(),])
+
 
             print('roots ', r)
             print('real ', r[np.imag(r) == 0])
