@@ -1,1 +1,0 @@
-train.py --dir=connect_normal-100 --model=VGG16 --data_path=data --epochs=100 --curve=PolyChain --num_bends=3 --fix_start --fix_end --init_start=curves/curve50/checkpoint-100.pt --init_end=curves/curve51/checkpoint-100.pt
