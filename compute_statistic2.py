@@ -38,15 +38,15 @@ regularizer = utils.l2_regularizer(1e-4)
 
 statistic = []
 
-for i in range(1, 44):
+for i in range(47, 56):
 
     ckpt = 'curves/curve' + str(i) + '/checkpoint-100.pt'
     checkpoint = torch.load(ckpt)
     model1.load_state_dict(checkpoint['model_state'])
 
-    for j in range(i+1, 44):
+    for j in range(i+1, i+2):
 
-            ckpt = 'curves/curve' + str(j) + '/checkpoint-100.pt'
+            ckpt = 'curves/curve' + str(j) + '/checkpoint-0.pt'
             checkpoint = torch.load(ckpt)
             model2.load_state_dict(checkpoint['model_state'])
 
@@ -74,4 +74,4 @@ for i in range(1, 44):
 
             statistic.append(values)
 
-pickle.dump( statistic, open( "stats/middle_point_stat.p", "wb"))
+pickle.dump( statistic, open( "stats/middle_point_stat100.p", "wb"))

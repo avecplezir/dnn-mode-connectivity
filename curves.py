@@ -304,28 +304,48 @@ class CurveNet(Module):
         for p1, p2 in zip(curve_parameters[0::3], curve_parameters[1::3]):
             p2.data.copy_(p1.data)
 
-        for i in range(3, int(len(curve_parameters)/3), 3): #int(len(curve_parameters)/3)
+        for i in range(6, len(curve_parameters), 6): #int(len(curve_parameters)/3)
 
             (p2, p3) = curve_parameters[i+1], curve_parameters[i+2]
-            (pp2, pp3) = curve_parameters[i-2], curve_parameters[i-1]
+            (pp2, pp3) = curve_parameters[i-5], curve_parameters[i-4]
+            (b2, b3) = curve_parameters[i+4], curve_parameters[i+5]
+            (pb2, pb3) = curve_parameters[i-2], curve_parameters[i-1]
 
             print('ind', i)
             print('shapes ', p2.shape, ' ', p3.shape, ' ', pp2.shape, ' ', pp3.shape)
+            print('b shapes ', b2.shape, ' ', b3.shape, ' ', pb2.shape, ' ', pb3.shape)
 
-            r = np.roots([(pp2.view(-1) @ pp2.view(-1)).data.numpy(), -(pp2.view(-1) @ pp3.view(-1)).data.numpy(),
-                      0.,
-                      -(p2.view(-1) @ p2.view(-1)).data.numpy(), (p3.view(-1)@p2.view(-1)).data.numpy(),])
+            r = np.roots([(pp2.view(-1) @ pp2.view(-1)).data.numpy()+(pb2.view(-1) @ pb2.view(-1)).data.numpy(),
+                          -(pp2.view(-1) @ pp3.view(-1)).data.numpy()-(pb2.view(-1) @ pb3.view(-1)).data.numpy(),
+                          0.,
+                          (p3.view(-1)@p2.view(-1)).data.numpy()+(b3.view(-1) @ b2.view(-1)).data.numpy(),
+                          -(p2.view(-1) @ p2.view(-1)).data.numpy()-(b2.view(-1) @ b2.view(-1)).data.numpy(),
+                          ])
 
 
-            print('roots ', r)
-            print('real ', r[np.imag(r) == 0])
+            # print('roots ', r)
+            r = r[(np.imag(r) == 0) * (np.real(r) > 0)]
+            print('real ', r)
 
             l = np.real(r[np.imag(r) == 0][0])
 
             print('l ', l)
 
-            pp2.data.copy_(l*pp2.data)
-            p2.data.copy_(1/l*p2.data)
+            p2.type(dtype=torch.DoubleTensor)
+            pp2.type(dtype=torch.DoubleTensor)
+            b2.type(dtype=torch.DoubleTensor)
+            pb2.type(dtype=torch.DoubleTensor)
+
+            # pp2.data.copy_(10*pp2.data)
+            # pp2.data.copy_(0.1*pp2.data)
+            # p2.data.copy_(10*p2.data)
+            # p2.data.copy_(0.1*p2.data)
+
+            p2.data.copy_(1./l * p2.data)
+            b2.data.copy_(1./l * b2.data)
+            pp2.data.copy_(l * pp2.data)
+            pb2.data.copy_(l * pb2.data)
+
 
 
         # for ind, (p1, p2, p3) in enumerate(zip(curve_parameters[3::3], curve_parameters[4::3], curve_parameters[5::3])):
@@ -340,6 +360,16 @@ class CurveNet(Module):
         #     else:
         #         print('cum_l ', ind, ' ', cum_l)
         #         p3.data.copy_(cum_l * p1.data)
+
+        # ch = curve_parameters[-2]
+        # ch2 = curve_parameters[-2-3]
+        # ch.data.copy_(10*ch.data)
+        # ch2.data.copy_(10 * ch2.data)
+        #
+        # ch = curve_parameters[-8]
+        # ch2 = curve_parameters[-8 - 3]
+        # ch.data.copy_(0.1 * ch.data)
+        # ch2.data.copy_(0.1 * ch2.data)
 
         w = list()
         curve_parameters = list(self.net.parameters())

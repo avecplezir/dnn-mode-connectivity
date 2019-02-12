@@ -58,7 +58,7 @@ parser.add_argument('--resume', type=str, default=None, metavar='CKPT',
 
 parser.add_argument('--epochs', type=int, default=100, metavar='N',
                     help='number of epochs to train (default: 200)')
-parser.add_argument('--save_freq', type=int, default=50, metavar='N',
+parser.add_argument('--save_freq', type=int, default=100, metavar='N',
                     help='save frequency (default: 50)')
 parser.add_argument('--lr', type=float, default=0.01, metavar='LR',
                     help='initial learning rate (default: 0.01)')
@@ -162,42 +162,42 @@ utils.save_checkpoint(
     optimizer_state=optimizer.state_dict()
 )
 
-# has_bn = utils.check_bn(model)
-# test_res = {'loss': None, 'accuracy': None, 'nll': None}
-# for epoch in range(start_epoch, args.epochs + 1):
-#     time_ep = time.time()
-#
-#     lr = learning_rate_schedule(args.lr, epoch, args.epochs)
-#     utils.adjust_learning_rate(optimizer, lr)
-#
-#     train_res = utils.train(loaders['train'], model, optimizer, criterion, regularizer)
-#     if args.curve is None or not has_bn:
-#         test_res = utils.test(loaders['test'], model, criterion, regularizer)
-#
-#     if epoch % args.save_freq == 0:
-#         utils.save_checkpoint(
-#             args.dir,
-#             epoch,
-#             model_state=model.state_dict(),
-#             optimizer_state=optimizer.state_dict()
-#         )
-#
-#     time_ep = time.time() - time_ep
-#     values = [epoch, lr, train_res['loss'], train_res['accuracy'], test_res['nll'],
-#               test_res['accuracy'], time_ep]
-#
-#     table = tabulate.tabulate([values], columns, tablefmt='simple', floatfmt='9.4f')
-#     if epoch % 40 == 1 or epoch == start_epoch:
-#         table = table.split('\n')
-#         table = '\n'.join([table[1]] + table)
-#     else:
-#         table = table.split('\n')[2]
-#     print(table)
-#
-# if args.epochs % args.save_freq != 0:
-#     utils.save_checkpoint(
-#         args.dir,
-#         args.epochs,
-#         model_state=model.state_dict(),
-#         optimizer_state=optimizer.state_dict()
-#     )
+has_bn = utils.check_bn(model)
+test_res = {'loss': None, 'accuracy': None, 'nll': None}
+for epoch in range(start_epoch, args.epochs + 1):
+    time_ep = time.time()
+
+    lr = learning_rate_schedule(args.lr, epoch, args.epochs)
+    utils.adjust_learning_rate(optimizer, lr)
+
+    train_res = utils.train(loaders['train'], model, optimizer, criterion, regularizer)
+    if args.curve is None or not has_bn:
+        test_res = utils.test(loaders['test'], model, criterion, regularizer)
+
+    if epoch % args.save_freq == 0:
+        utils.save_checkpoint(
+            args.dir,
+            epoch,
+            model_state=model.state_dict(),
+            optimizer_state=optimizer.state_dict()
+        )
+
+    time_ep = time.time() - time_ep
+    values = [epoch, lr, train_res['loss'], train_res['accuracy'], test_res['nll'],
+              test_res['accuracy'], time_ep]
+
+    table = tabulate.tabulate([values], columns, tablefmt='simple', floatfmt='9.4f')
+    if epoch % 40 == 1 or epoch == start_epoch:
+        table = table.split('\n')
+        table = '\n'.join([table[1]] + table)
+    else:
+        table = table.split('\n')[2]
+    print(table)
+
+if args.epochs % args.save_freq != 0:
+    utils.save_checkpoint(
+        args.dir,
+        args.epochs,
+        model_state=model.state_dict(),
+        optimizer_state=optimizer.state_dict()
+    )
