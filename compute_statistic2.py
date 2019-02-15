@@ -46,7 +46,7 @@ for i in range(47, 100):
 
     for j in range(i+1, i+2):
 
-            ckpt = 'curves/curve' + str(j) + '/checkpoint-0.pt'
+            ckpt = 'curves/curve' + str(j) + '/checkpoint-100.pt'
             checkpoint = torch.load(ckpt)
             model2.load_state_dict(checkpoint['model_state'])
 
@@ -74,4 +74,4 @@ for i in range(47, 100):
 
             statistic.append(values)
 
-pickle.dump(statistic, open("stats/2middle_point_stat.p", "wb"))
+pickle.dump(statistic, open("stats2/100middle_point_stat.p", "wb"))

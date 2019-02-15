@@ -33,6 +33,7 @@ args = parser.parse_args()
 os.makedirs(args.dir, exist_ok=True)
 
 
+d = args.dir
 init_start = args.init_start #'curves/curve50/checkpoint-100.pt'
 init_middle = args.init_middle #'curves/curve51/checkpoint-100.pt'
 init_end = args.init_end #'curves/curve52/checkpoint-100.pt'
@@ -62,7 +63,7 @@ for path, k in [(init_start, 0), (init_middle, 1), (init_end, 2)]:
         model.import_base_parameters(base_model, k)
             
 utils.save_checkpoint(
-                    args.dir,
+                     d,
                      -1,
                      model_state=model.state_dict(),
                      optimizer_state=-1
