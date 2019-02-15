@@ -14,12 +14,28 @@ import pickle
 
 import copy
 
-d = 'three_eq_points_nConve'
-os.makedirs(d, exist_ok=True)
+parser = argparse.ArgumentParser(description='Computes values for plane visualization')
+parser.add_argument('--dir', type=str, default='points2plane/new', metavar='DIR',
+                    help='training directory (default: /tmp/plane)')
 
-init_start = 'curve/checkpoint-100.pt'
-init_middle = 'curve/checkpoint_n200Conve-100.pt'
-init_end = 'curve/checkpoint_n200-100.pt'
+
+parser.add_argument('--ckpt', type=str, default=None, metavar='CKPT',
+                    help='checkpoint to eval (default: None)')
+parser.add_argument('--init_start', type=str, default=None, metavar='CKPT',
+                    help='checkpoint to init start point (default: None)')
+parser.add_argument('--init_middle', type=str, default=None, metavar='CKPT',
+                    help='checkpoint to init start point (default: None)')
+parser.add_argument('--init_end', type=str, default=None, metavar='CKPT',
+                    help='checkpoint to init end point (default: None)')
+
+args = parser.parse_args()
+
+os.makedirs(args.dir, exist_ok=True)
+
+
+init_start = args.init_start #'curves/curve50/checkpoint-100.pt'
+init_middle = args.init_middle #'curves/curve51/checkpoint-100.pt'
+init_end = args.init_end #'curves/curve52/checkpoint-100.pt'
 num_classes = 10
 
 architecture = getattr(models, "VGG16")
@@ -46,7 +62,7 @@ for path, k in [(init_start, 0), (init_middle, 1), (init_end, 2)]:
         model.import_base_parameters(base_model, k)
             
 utils.save_checkpoint(
-                     d,
+                    args.dir,
                      -1,
                      model_state=model.state_dict(),
                      optimizer_state=-1

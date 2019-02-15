@@ -39,11 +39,11 @@ print("y_pred ", y_pred)
 def change_node(l1, l2, i, j):
     
     c = copy.deepcopy(torch.nn.Parameter(list(model.modules())[l1].weight[j]))
-    list(model.modules())[l1].weight[j]  = list(model.modules())[l1].weight[i] 
+    list(model.modules())[l1].weight[j] = list(model.modules())[l1].weight[i]
     list(model.modules())[l1].weight[i] = c
     
     c = copy.deepcopy(torch.nn.Parameter(list(model.modules())[l2].weight.transpose(0,1)[j]))
-    list(model.modules())[l2].weight.transpose(0,1)[j]  = list(model.modules())[l2].weight.transpose(0,1)[i]
+    list(model.modules())[l2].weight.transpose(0,1)[j] = list(model.modules())[l2].weight.transpose(0,1)[i]
     list(model.modules())[l2].weight.transpose(0,1)[i] = c
     
 for i in range(200):    

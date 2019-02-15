@@ -67,6 +67,7 @@ class VGGBase(nn.Module):
                 m.weight.data.normal_(0, math.sqrt(2. / n))
                 m.bias.data.zero_()
 
+
     def forward(self, x):
         for layers, activations, pooling in zip(self.layer_blocks, self.activation_blocks,
                                                 self.poolings):

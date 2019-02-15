@@ -11,6 +11,13 @@ import curves
 import utils
 import pickle
 
+parser = argparse.ArgumentParser(description='DNN curve training')
+parser.add_argument('--number_points', type=int, default=1, metavar='NM',
+                    help='for how many points compute centre mass')
+
+
+args = parser.parse_args()
+
 loaders, num_classes = data.loaders(
     "CIFAR10",
     "data",
@@ -21,7 +28,7 @@ loaders, num_classes = data.loaders(
 
 architecture = getattr(models, "VGG16")
 
-number_points = 3
+number_points = args.number_points
 
 models = [ architecture.base(num_classes=10, **architecture.kwargs) for i in range(number_points)]
 
@@ -37,13 +44,13 @@ regularizer = utils.l2_regularizer(1e-4)
 
 statistic = []
 
-ind = 1
+ind = 47
 T = True
 
 # index = list(range(number_points))
 
 
-while ind < 41:
+while ind < 100-number_points+1:
 
     l = []
     for m in models:
@@ -80,6 +87,6 @@ while ind < 41:
 
     statistic.append(values)
 
-    ind -= (len(models)-1)
+    ind -= (number_points-1)
 
-pickle.dump( statistic, open( "stats/middle_point_stat_"+str(number_points)+".p", "wb"))
+pickle.dump( statistic, open( "stats2/middle_point_stat_"+str(number_points)+".p", "wb"))
