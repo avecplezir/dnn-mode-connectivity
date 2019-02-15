@@ -50,7 +50,7 @@ T = True
 # index = list(range(number_points))
 
 
-while ind < 57-number_points+1:
+while ind < 100-number_points+1:
 
     l = []
     for m in models:
@@ -89,4 +89,4 @@ while ind < 57-number_points+1:
 
     ind -= (number_points-1)
 
-pickle.dump( statistic, open( "stats/centre_mass_stat_"+str(number_points)+".p", "wb"))
+pickle.dump( statistic, open( "stats2/middle_point_stat_"+str(number_points)+".p", "wb"))
