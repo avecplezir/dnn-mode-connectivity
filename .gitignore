@@ -29,6 +29,7 @@ points2plane/
 data/
 evals/
 stats/
+stats_2/
 stats2/
 
 # PyInstaller
