@@ -29,6 +29,7 @@ points2plane/
 data/
 evals/
 stats/
+stats2/
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
