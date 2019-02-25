@@ -219,6 +219,8 @@ grid = np.zeros((G, G, 2))
 base_model = architecture.base(num_classes, **architecture.kwargs)
 base_model.cuda()
 
+print("Computing grid")
+
 columns = ['X', 'Y', 'Train loss', 'Train nll', 'Train error (%)', 'Test nll', 'Test error (%)']
 
 for i, alpha in enumerate(alphas):
