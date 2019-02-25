@@ -37,6 +37,7 @@ class Transforms:
             ])
 
     CIFAR100 = CIFAR10
+    MNIST = CIFAR10
 
 
 def loaders(dataset, path, batch_size, num_workers, transform_name, use_test=False,

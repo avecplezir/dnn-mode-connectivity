@@ -27,6 +27,9 @@ parser.add_argument('--init_middle', type=str, default=None, metavar='CKPT',
                     help='checkpoint to init start point (default: None)')
 parser.add_argument('--init_end', type=str, default=None, metavar='CKPT',
                     help='checkpoint to init end point (default: None)')
+parser.add_argument('--model', type=str, default=None, metavar='MODEL', required=True,
+                    help='model name (default: None)')
+
 
 args = parser.parse_args()
 
@@ -39,7 +42,7 @@ init_middle = args.init_middle #'curves/curve51/checkpoint-100.pt'
 init_end = args.init_end #'curves/curve52/checkpoint-100.pt'
 num_classes = 10
 
-architecture = getattr(models, "VGG16")
+architecture = getattr(models, args.model)
 curve = getattr(curves, 'PolyChain')
 
 model = curves.CurveNet(

@@ -16,7 +16,7 @@ config = {
 }
 
 
-def make_layers(config, batch_norm=False, fix_points=None):
+def make_layers(config, batch_norm=False, fix_points=None, in_channels=3):
     layer_blocks = nn.ModuleList()
     activation_blocks = nn.ModuleList()
     poolings = nn.ModuleList()
@@ -29,7 +29,7 @@ def make_layers(config, batch_norm=False, fix_points=None):
         conv = curves.Conv2d
         bn = curves.BatchNorm2d
 
-    in_channels = 3
+    in_channels = in_channels
     for sizes in config:
         layer_blocks.append(nn.ModuleList())
         activation_blocks.append(nn.ModuleList())
@@ -44,16 +44,16 @@ def make_layers(config, batch_norm=False, fix_points=None):
 
 
 class VGGBase(nn.Module):
-    def __init__(self, num_classes, depth=16, batch_norm=False):
+    def __init__(self, num_classes, depth=16, batch_norm=False, in_channels=3, in_classifier_dim=512):
         super(VGGBase, self).__init__()
-        layer_blocks, activation_blocks, poolings = make_layers(config[depth], batch_norm)
+        layer_blocks, activation_blocks, poolings = make_layers(config[depth], batch_norm, in_channels)
         self.layer_blocks = layer_blocks
         self.activation_blocks = activation_blocks
         self.poolings = poolings
 
         self.classifier = nn.Sequential(
             nn.Dropout(),
-            nn.Linear(512, 512),
+            nn.Linear(in_classifier_dim, 512),
             nn.ReLU(inplace=True),
             nn.Dropout(),
             nn.Linear(512, 512),
@@ -81,17 +81,17 @@ class VGGBase(nn.Module):
 
 
 class VGGCurve(nn.Module):
-    def __init__(self, num_classes, fix_points, depth=16, batch_norm=False):
+    def __init__(self, num_classes, fix_points, depth=16, batch_norm=False, in_channels=3, in_classifier_dim=512):
         super(VGGCurve, self).__init__()
         layer_blocks, activation_blocks, poolings = make_layers(config[depth],
                                                                 batch_norm,
-                                                                fix_points=fix_points)
+                                                                fix_points=fix_points, in_channels=in_channels)
         self.layer_blocks = layer_blocks
         self.activation_blocks = activation_blocks
         self.poolings = poolings
 
         self.dropout1 = nn.Dropout()
-        self.fc1 = curves.Linear(512, 512, fix_points=fix_points)
+        self.fc1 = curves.Linear(in_classifier_dim, 512, fix_points=fix_points)
         self.relu1 = nn.ReLU(inplace=True)
         self.dropout2 = nn.Dropout()
         self.fc2 = curves.Linear(512, 512, fix_points=fix_points)
@@ -162,3 +162,15 @@ class VGG19BN:
         'depth': 19,
         'batch_norm': True
     }
+
+
+class VGG16MNIST:
+    base = VGGBase
+    curve = VGGCurve
+    kwargs = {
+        'depth': 16,
+        'batch_norm': False,
+        'in_cnanels': 1,
+        'in_classifier_dim': 512
+    }
+
