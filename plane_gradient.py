@@ -234,6 +234,7 @@ for i, alpha in enumerate(alphas):
             parameter.data.copy_(torch.from_numpy(value))
             offset += size
 
+
         utils.update_bn(loaders['train'], base_model)
 
         tr_res = utils.test(loaders['train'], base_model, criterion, regularizer)
