@@ -90,6 +90,7 @@ loaders, num_classes = data.loaders(
 )
 
 architecture = getattr(models, args.model)
+num_classes = int(num_classes)
 
 if args.curve is None:
     model = architecture.base(num_classes=num_classes, **architecture.kwargs)

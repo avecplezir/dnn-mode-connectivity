@@ -38,26 +38,27 @@ parser.add_argument('--model', type=str, default=None, metavar='MODEL', required
 
 parser.add_argument('--ckpt', type=str, default=None, metavar='CKPT',
                     help='checkpoint to init end point (default: None)')
-
+parser.add_argument('--number_swaps', type=int, default=200, metavar='NS')
 
 
 
 args = parser.parse_args()
 
+loaders, num_classes = data.loaders(
+    args.dataset,
+    args.data_path,
+    args.batch_size,
+    args.num_workers,
+    args.transform,
+    args.use_test
+)
+num_classes = int(num_classes)
+
 architecture = getattr(models, args.model)
 
-model = architecture.base(num_classes=10, **architecture.kwargs)
+model = architecture.base(num_classes=num_classes, **architecture.kwargs)
 
 model.load_state_dict(torch.load(args.ckpt)['model_state'])
-
-loaders, num_classes = data.loaders(
-    "CIFAR10",
-    "data",
-    128,
-    1,
-    "VGG",
-    False
-)
 
 for X, y in loaders['train']:
     break
@@ -68,18 +69,24 @@ print("y ", y)
 
 print("y_pred ", y_pred)
 
+
 def change_node(l1, l2, i, j):
-    
+    #   matrix
     c = copy.deepcopy(torch.nn.Parameter(list(model.modules())[l1].weight[j]))
     list(model.modules())[l1].weight[j] = list(model.modules())[l1].weight[i]
     list(model.modules())[l1].weight[i] = c
+
+    #     bias
+    c = copy.deepcopy(torch.nn.Parameter(list(model.modules())[l1].bias[j]))
+    list(model.modules())[l1].bias[j] = list(model.modules())[l1].bias[i]
+    list(model.modules())[l1].bias[i] = c
+
+    c = copy.deepcopy(torch.nn.Parameter(list(model.modules())[l2].weight.transpose(0, 1)[j]))
+    list(model.modules())[l2].weight.transpose(0, 1)[j] = list(model.modules())[l2].weight.transpose(0, 1)[i]
+    list(model.modules())[l2].weight.transpose(0, 1)[i] = c
     
-    c = copy.deepcopy(torch.nn.Parameter(list(model.modules())[l2].weight.transpose(0,1)[j]))
-    list(model.modules())[l2].weight.transpose(0,1)[j] = list(model.modules())[l2].weight.transpose(0,1)[i]
-    list(model.modules())[l2].weight.transpose(0,1)[i] = c
-    
-for i in range(400):
-    change_node(args.l1, args.l2, i, 2*i);
+for i in range(args.number_swaps):
+    change_node(args.l1, args.l2, i, i+args.number_swaps)
 
 
 y_pred_n = torch.argmax(model(X), dim=-1)

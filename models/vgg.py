@@ -8,7 +8,7 @@ import torch.nn as nn
 
 import curves
 
-__all__ = ['VGG16', 'VGG16BN', 'VGG19', 'VGG19BN']
+__all__ = ['VGG16', 'VGG16BN', 'VGG19', 'VGG19BN', 'VGG16MNIST']
 
 config = {
     16: [[64, 64], [128, 128], [256, 256, 256], [512, 512, 512], [512, 512, 512]],
@@ -46,7 +46,7 @@ def make_layers(config, batch_norm=False, fix_points=None, in_channels=3):
 class VGGBase(nn.Module):
     def __init__(self, num_classes, depth=16, batch_norm=False, in_channels=3, in_classifier_dim=512):
         super(VGGBase, self).__init__()
-        layer_blocks, activation_blocks, poolings = make_layers(config[depth], batch_norm, in_channels)
+        layer_blocks, activation_blocks, poolings = make_layers(config[depth], batch_norm, in_channels=in_channels)
         self.layer_blocks = layer_blocks
         self.activation_blocks = activation_blocks
         self.poolings = poolings
@@ -170,7 +170,7 @@ class VGG16MNIST:
     kwargs = {
         'depth': 16,
         'batch_norm': False,
-        'in_cnanels': 1,
+        'in_channels': 1,
         'in_classifier_dim': 512
     }
 

@@ -61,36 +61,3 @@ print("eq ", ~(y_pred==y_pred_r))
 print("err ", (~(y_pred==y_pred_r)).sum())
 
 print("y_pred_r ", y_pred_r)
-
-"""
-def change_node(l1, l2, i, j):
-    
-    c = copy.deepcopy(torch.nn.Parameter(list(model.modules())[l1].weight[j]))
-    list(model.modules())[l1].weight[j]  = list(model.modules())[l1].weight[i] 
-    list(model.modules())[l1].weight[i] = c
-    
-    c = copy.deepcopy(torch.nn.Parameter(list(model.modules())[l2].weight.transpose(0,1)[j]))
-    list(model.modules())[l2].weight.transpose(0,1)[j]  = list(model.modules())[l2].weight.transpose(0,1)[i]
-    list(model.modules())[l2].weight.transpose(0,1)[i] = c
-    
-change_node(-3, -1, 0, 1)
-
-y_pred_n = torch.argmax(model(X), dim=-1)
-
-print("eq ", ~(y_pred_n==y_pred_r))
-print("err ", (~(y_pred_n==y_pred_r)).sum())
-
-print("y_pred_n ", y_pred_n)
-
-# saving changed checkpoints
-
-print("Saving checkpoint for node changing")
-
-utils.save_checkpoint(
-            'curve',
-            100,
-            name='checkpoint_n',
-            model_state=model.state_dict(),
-            optimizer_state=checkpoints['optimizer_state']
-        )
-"""

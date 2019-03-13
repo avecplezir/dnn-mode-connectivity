@@ -4,7 +4,7 @@ import torch.nn as nn
 import curves
 
 __all__ = [
-    'Linear',
+    'Linear', 'LinearMNIST',
 ]
 
 
@@ -91,5 +91,5 @@ class LinearMNIST:
     base = LinearBase
     curve = LinearCurve
     kwargs = {
-        'in_dim': 28*28
+        'in_dim': 784
     }

@@ -69,6 +69,7 @@ loaders, num_classes = data.loaders(
     args.use_test,
     shuffle_train=False
 )
+num_classes = int(num_classes)
 
 architecture = getattr(models, args.model)
 curve = getattr(curves, args.curve)
@@ -96,9 +97,18 @@ def get_xy(point, origin, vector_x, vector_y):
 w = list()
 curve_parameters = list(curve_model.net.parameters())
 for i in range(args.num_bends):
-    w.append(np.concatenate([
-        p.data.cpu().numpy().ravel() for p in curve_parameters[i::args.num_bends]
-    ]))
+    if (i==1) & (args.curve=='Arc'):
+        l = list()
+        for mu, p1, p2 in zip(curve_parameters[i::args.num_bends],
+                                     curve_parameters[0::args.num_bends],
+                                     curve_parameters[2::args.num_bends]):
+            p = (mu+(1/np.sqrt(2))*(p1-mu)+(1/np.sqrt(2))*(p2-mu))
+            l.append(p.data.cpu().numpy().ravel())
+        w.append(np.concatenate(l))
+    else:
+        w.append(np.concatenate([
+            p.data.cpu().numpy().ravel() for p in curve_parameters[i::args.num_bends]
+        ]))
 
 print('Weight space dimensionality: %d' % w[0].shape[0])
 

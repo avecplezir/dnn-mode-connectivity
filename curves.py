@@ -37,6 +37,22 @@ class PolyChain(Module):
         return torch.max(self.range.new([0.0]), 1.0 - torch.abs(t_n - self.range))
 
 
+class Arc(Module):
+    def __init__(self, num_bends):
+        super(Arc, self).__init__()
+        self.num_bends = num_bends
+        self.register_buffer('range', torch.arange(0, float(num_bends)))
+
+    def a(self, t):
+        return torch.cos(np.pi*t/2)
+
+    def b(self, t):
+        return torch.sin(np.pi*t/2)
+
+    def forward(self, t):
+        return torch.cat([self.a(t), 1.-self.a(t)-self.b(t), self.b(t)]) #torch.max(self.range.new([0.0]), 1.0 - torch.abs(t_n - self.range))
+
+
 class CurveModule(Module):
 
     def __init__(self, fix_points, parameter_names=()):
@@ -336,40 +352,10 @@ class CurveNet(Module):
             b2.type(dtype=torch.DoubleTensor)
             pb2.type(dtype=torch.DoubleTensor)
 
-            # pp2.data.copy_(10*pp2.data)
-            # pp2.data.copy_(0.1*pp2.data)
-            # p2.data.copy_(10*p2.data)
-            # p2.data.copy_(0.1*p2.data)
-
             p2.data.copy_(1./l * p2.data)
             b2.data.copy_(1./l * b2.data)
             pp2.data.copy_(l * pp2.data)
             pb2.data.copy_(l * pb2.data)
-
-
-
-        # for ind, (p1, p2, p3) in enumerate(zip(curve_parameters[3::3], curve_parameters[4::3], curve_parameters[5::3])):
-        #     if ind != (len(curve_parameters[0::3]) - 1):
-        #         print('ind', ind)
-        #         print('shapes ', p1.shape, ' ', p2.shape)
-        #         l = p1.view(-1) @ p2.view(-1) / (p1.view(-1) @ p1.view(-1))
-        #         cum_l = cum_l / l
-        #         print('l shape ', l.shape)
-        #         print('l ', l)
-        #         p3.data.copy_(l * p1.data)
-        #     else:
-        #         print('cum_l ', ind, ' ', cum_l)
-        #         p3.data.copy_(cum_l * p1.data)
-
-        # ch = curve_parameters[-2]
-        # ch2 = curve_parameters[-2-3]
-        # ch.data.copy_(10*ch.data)
-        # ch2.data.copy_(10 * ch2.data)
-        #
-        # ch = curve_parameters[-8]
-        # ch2 = curve_parameters[-8 - 3]
-        # ch.data.copy_(0.1 * ch.data)
-        # ch2.data.copy_(0.1 * ch2.data)
 
         w = list()
         curve_parameters = list(self.net.parameters())
