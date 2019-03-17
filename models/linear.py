@@ -4,7 +4,7 @@ import torch.nn as nn
 import curves
 
 __all__ = [
-    'Linear',
+    'Linear', 'LinearMNIST', 'LogRegression', 'LinearOneLayer'
 ]
 
 
@@ -78,6 +78,58 @@ class LinearCurve(nn.Module):
 
         return x
 
+class LogRegressionBase(nn.Module):
+    def __init__(self, num_classes, in_dim):
+        super(LogRegressionBase, self).__init__()
+        self.fc = nn.Linear(in_dim, num_classes)
+
+    def forward(self, x):
+        x = x.view(x.size(0), -1)
+        x = self.fc(x)
+        return x
+
+class LogRegressionCurve(nn.Module):
+    def __init__(self, num_classes, fix_points, in_dim):
+        super(LogRegressionCurve, self).__init__()
+        self.fc = curves.Linear(in_dim, num_classes, fix_points=fix_points)
+
+    def forward(self, x, coeffs_t):
+
+        x = x.view(x.size(0), -1)
+        x = self.fc(x, coeffs_t)
+        return x
+
+class LinearOneLayerBase(nn.Module):
+    def __init__(self, num_classes, in_dim):
+        super(LinearOneLayerBase, self).__init__()
+        self.fc = nn.Sequential(
+            nn.Linear(in_dim, 2000),
+            nn.ReLU(True),
+            nn.Linear(2000, num_classes),
+        )
+
+    def forward(self, x):
+        x = x.view(x.size(0), -1)
+        x = self.fc(x)
+        return x
+
+
+class LinearOneLayerCurve(nn.Module):
+    def __init__(self, num_classes, fix_points, in_dim):
+        super(LinearOneLayerCurve, self).__init__()
+        self.fc1 = curves.Linear(in_dim, 2000, fix_points=fix_points)
+        self.relu1 = nn.ReLU(True)
+        self.fc2 = curves.Linear(2000,num_classes, fix_points=fix_points)
+
+    def forward(self, x, coeffs_t):
+
+        x = x.view(x.size(0), -1)
+
+        x = self.fc1(x, coeffs_t)
+        x = self.relu1(x)
+        x = self.fc2(x, coeffs_t)
+        return x
+
 
 class Linear:
     base = LinearBase
@@ -91,5 +143,20 @@ class LinearMNIST:
     base = LinearBase
     curve = LinearCurve
     kwargs = {
-        'in_dim': 28*28
+        'in_dim': 784
+    }
+
+
+class LogRegression:
+    base = LogRegressionBase
+    curve = LogRegressionCurve
+    kwargs = {
+        'in_dim': 784
+    }
+
+class LinearOneLayer:
+    base = LinearOneLayerBase
+    curve = LinearOneLayerCurve
+    kwargs = {
+        'in_dim': 784
     }

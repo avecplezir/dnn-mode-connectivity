@@ -58,7 +58,7 @@ def rescaled_shift(model, criterion, regularizer=None):
 
 
 
-def train(train_loader, model, optimizer, criterion, regularizer=None, lr_schedule=None):
+def train(train_loader, model, optimizer, criterion, regularizer=None, lr_schedule=None, cuda=False):
     loss_sum = 0.0
     correct = 0.0
 
@@ -68,8 +68,9 @@ def train(train_loader, model, optimizer, criterion, regularizer=None, lr_schedu
         if lr_schedule is not None:
             lr = lr_schedule(iter / num_iters)
             adjust_learning_rate(optimizer, lr)
-        input = input.cuda(non_blocking=True)
-        target = target.cuda(non_blocking=True)
+        if cuda:
+            input = input.cuda(non_blocking=True)
+            target = target.cuda(non_blocking=True)
 
         output = model(input)
         loss = criterion(output, target)
@@ -90,7 +91,7 @@ def train(train_loader, model, optimizer, criterion, regularizer=None, lr_schedu
     }
 
 
-def test(test_loader, model, criterion, regularizer=None, **kwargs):
+def test(test_loader, model, criterion, regularizer=None, cuda=False, **kwargs):
     loss_sum = 0.0
     nll_sum = 0.0
     correct = 0.0
@@ -98,8 +99,9 @@ def test(test_loader, model, criterion, regularizer=None, **kwargs):
     model.eval()
 
     for input, target in test_loader:
-        input = input.cuda(non_blocking=True)
-        target = target.cuda(non_blocking=True)
+        if cuda:
+            input = input.cuda(non_blocking=True)
+            target = target.cuda(non_blocking=True)
 
         output = model(input, **kwargs)
         nll = criterion(output, target)

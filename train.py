@@ -68,6 +68,7 @@ parser.add_argument('--wd', type=float, default=1e-4, metavar='WD',
                     help='weight decay (default: 1e-4)')
 
 parser.add_argument('--seed', type=int, default=1, metavar='S', help='random seed (default: 1)')
+parser.add_argument('--cuda', action='store_true')
 
 args = parser.parse_args()
 
@@ -76,9 +77,11 @@ with open(os.path.join(args.dir, 'command.sh'), 'w') as f:
     f.write(' '.join(sys.argv))
     f.write('\n')
 
-torch.backends.cudnn.benchmark = True
-torch.manual_seed(args.seed)
-torch.cuda.manual_seed(args.seed)
+if args.cuda:
+
+    torch.backends.cudnn.benchmark = True
+    torch.manual_seed(args.seed)
+    torch.cuda.manual_seed(args.seed)
 
 loaders, num_classes = data.loaders(
     args.dataset,
@@ -90,6 +93,7 @@ loaders, num_classes = data.loaders(
 )
 
 architecture = getattr(models, args.model)
+num_classes = int(num_classes)
 
 if args.curve is None:
     model = architecture.base(num_classes=num_classes, **architecture.kwargs)
@@ -121,7 +125,8 @@ else:
             print('Rescale initialization.')
             model.init_rescale()
 
-model.cuda()
+if args.cuda:
+    model.cuda()
 
 
 def learning_rate_schedule(base_lr, epoch, total_epochs):
@@ -170,9 +175,9 @@ for epoch in range(start_epoch, args.epochs + 1):
     lr = learning_rate_schedule(args.lr, epoch, args.epochs)
     utils.adjust_learning_rate(optimizer, lr)
 
-    train_res = utils.train(loaders['train'], model, optimizer, criterion, regularizer)
+    train_res = utils.train(loaders['train'], model, optimizer, criterion, regularizer, cuda=args.cuda)
     if args.curve is None or not has_bn:
-        test_res = utils.test(loaders['test'], model, criterion, regularizer)
+        test_res = utils.test(loaders['test'], model, criterion, regularizer, cuda=args.cuda)
 
     if epoch % args.save_freq == 0:
         utils.save_checkpoint(

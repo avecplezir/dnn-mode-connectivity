@@ -53,12 +53,14 @@ parser.add_argument('--ckpt', type=str, default=None, metavar='CKPT',
 
 parser.add_argument('--wd', type=float, default=1e-4, metavar='WD',
                     help='weight decay (default: 1e-4)')
+parser.add_argument('--cuda', action='store_true')
 
 args = parser.parse_args()
 
 os.makedirs(args.dir, exist_ok=True)
 
-torch.backends.cudnn.benchmark = True
+if args.cuda:
+    torch.backends.cudnn.benchmark = True
 
 loaders, num_classes = data.loaders(
     args.dataset,
@@ -69,6 +71,7 @@ loaders, num_classes = data.loaders(
     args.use_test,
     shuffle_train=False
 )
+num_classes = int(num_classes)
 
 architecture = getattr(models, args.model)
 curve = getattr(curves, args.curve)
@@ -80,7 +83,9 @@ curve_model = curves.CurveNet(
     args.num_bends,
     architecture_kwargs=architecture.kwargs,
 )
-curve_model.cuda()
+
+if args.cuda:
+    curve_model.cuda()
 
 checkpoint = torch.load(args.ckpt)
 curve_model.load_state_dict(checkpoint['model_state'])
@@ -96,9 +101,18 @@ def get_xy(point, origin, vector_x, vector_y):
 w = list()
 curve_parameters = list(curve_model.net.parameters())
 for i in range(args.num_bends):
-    w.append(np.concatenate([
-        p.data.cpu().numpy().ravel() for p in curve_parameters[i::args.num_bends]
-    ]))
+    if (i==1) & (args.curve=='Arc'):
+        l = list()
+        for mu, p1, p2 in zip(curve_parameters[i::args.num_bends],
+                                     curve_parameters[0::args.num_bends],
+                                     curve_parameters[2::args.num_bends]):
+            p = (mu+(1/np.sqrt(2))*(p1-mu)+(1/np.sqrt(2))*(p2-mu))
+            l.append(p.data.cpu().numpy().ravel())
+        w.append(np.concatenate(l))
+    else:
+        w.append(np.concatenate([
+            p.data.cpu().numpy().ravel() for p in curve_parameters[i::args.num_bends]
+        ]))
 
 print('Weight space dimensionality: %d' % w[0].shape[0])
 
@@ -116,7 +130,10 @@ bend_coordinates = np.stack(get_xy(p, w[0], u, v) for p in w)
 ts = np.linspace(0.0, 1.0, args.curve_points)
 curve_coordinates = []
 for t in np.linspace(0.0, 1.0, args.curve_points):
-    weights = curve_model.weights(torch.Tensor([t]).cuda())
+    if args.cuda:
+        weights = curve_model.weights(torch.Tensor([t]).cuda())
+    else:
+        weights = curve_model.weights(torch.Tensor([t]))
     curve_coordinates.append(get_xy(weights, w[0], u, v))
 curve_coordinates = np.stack(curve_coordinates)
 
@@ -137,7 +154,8 @@ te_err = np.zeros((G, G))
 grid = np.zeros((G, G, 2))
 
 base_model = architecture.base(num_classes, **architecture.kwargs)
-base_model.cuda()
+if args.cuda:
+    base_model.cuda()
 
 columns = ['X', 'Y', 'Train loss', 'Train nll', 'Train error (%)', 'Test nll', 'Test error (%)']
 

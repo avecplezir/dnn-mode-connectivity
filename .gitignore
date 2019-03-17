@@ -32,6 +32,8 @@ stats/
 stats_2/
 stats2/
 stats3/
+curves_linear/
+curves_mnist/
 
 # PyInstaller
 #  Usually these files are written by a python script from a template

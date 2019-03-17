@@ -43,12 +43,14 @@ parser.add_argument('--ckpt', type=str, default=None, metavar='CKPT',
 
 parser.add_argument('--wd', type=float, default=1e-4, metavar='WD',
                     help='weight decay (default: 1e-4)')
+parser.add_argument('--cuda', action='store_true')
 
 args = parser.parse_args()
 
 os.makedirs(args.dir, exist_ok=True)
 
-torch.backends.cudnn.benchmark = True
+if args.cuda:
+    torch.backends.cudnn.benchmark = True
 
 loaders, num_classes = data.loaders(
     args.dataset,
@@ -59,8 +61,10 @@ loaders, num_classes = data.loaders(
     args.use_test,
     shuffle_train=False
 )
+num_classes = int(num_classes)
 
 architecture = getattr(models, args.model)
+
 curve = getattr(curves, args.curve)
 model = curves.CurveNet(
     num_classes,
@@ -69,7 +73,8 @@ model = curves.CurveNet(
     args.num_bends,
     architecture_kwargs=architecture.kwargs,
 )
-model.cuda()
+if args.cuda:
+    model.cuda()
 checkpoint = torch.load(args.ckpt)
 model.load_state_dict(checkpoint['model_state'])
 
@@ -92,7 +97,11 @@ previous_weights = None
 
 columns = ['t', 'Train loss', 'Train nll', 'Train error (%)', 'Test nll', 'Test error (%)']
 
-t = torch.FloatTensor([0.0]).cuda()
+if args.cuda:
+    t = torch.FloatTensor([0.0]).cuda()
+else:
+    t = torch.FloatTensor([0.0])
+
 for i, t_value in enumerate(ts):
     t.data.fill_(t_value)
     weights = model.weights(t)
@@ -101,8 +110,8 @@ for i, t_value in enumerate(ts):
     previous_weights = weights.copy()
 
     utils.update_bn(loaders['train'], model, t=t)
-    tr_res = utils.test(loaders['train'], model, criterion, regularizer, t=t)
-    te_res = utils.test(loaders['test'], model, criterion, regularizer, t=t)
+    tr_res = utils.test(loaders['train'], model, criterion, regularizer, t=t, cuda=args.cuda)
+    te_res = utils.test(loaders['test'], model, criterion, regularizer, t=t, cuda=args.cuda)
     tr_loss[i] = tr_res['loss']
     tr_nll[i] = tr_res['nll']
     tr_acc[i] = tr_res['accuracy']

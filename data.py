@@ -36,8 +36,23 @@ class Transforms:
                 transforms.Normalize(mean=[0.4914, 0.4822, 0.4465], std=[0.2023, 0.1994, 0.2010]),
             ])
 
+    class MNIST:
+
+        class VGG:
+
+            train = transforms.Compose([
+                # transforms.RandomCrop(28, padding=4),
+                # transforms.RandomHorizontalFlip(),
+                transforms.ToTensor(),
+                # transforms.Normalize(mean=[0.4914, 0.4822, 0.4465], std=[0.2023, 0.1994, 0.2010]),
+            ])
+
+            test = transforms.Compose([
+                transforms.ToTensor(),
+                # transforms.Normalize(mean=[0.4914, 0.4822, 0.4465], std=[0.2023, 0.1994, 0.2010]),
+            ])
+
     CIFAR100 = CIFAR10
-    MNIST = CIFAR10
 
 
 def loaders(dataset, path, batch_size, num_workers, transform_name, use_test=False,
@@ -52,6 +67,7 @@ def loaders(dataset, path, batch_size, num_workers, transform_name, use_test=Fal
         test_set = ds(path, train=False, download=True, transform=transform.test)
     else:
         print("Using train (45000) + validation (5000)")
+        print('len', len(train_set.train_data[:-5000]))
         train_set.train_data = train_set.train_data[:-5000]
         train_set.train_labels = train_set.train_labels[:-5000]
 
