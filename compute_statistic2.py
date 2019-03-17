@@ -74,4 +74,4 @@ for i in range(47, 100):
 
             statistic.append(values)
 
-pickle.dump(statistic, open("stats2/100middle_point_stat.p", "wb"))
+pickle.dump(statistic, open("stats2/dist_init_train.p", "wb"))
