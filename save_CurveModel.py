@@ -29,6 +29,8 @@ parser.add_argument('--init_end', type=str, default=None, metavar='CKPT',
                     help='checkpoint to init end point (default: None)')
 parser.add_argument('--model', type=str, default=None, metavar='MODEL', required=True,
                     help='model name (default: None)')
+parser.add_argument('--curve', type=str, default=None, metavar='CURVE',
+                    help='curve type to use (default: None)')
 
 
 args = parser.parse_args()
@@ -43,7 +45,7 @@ init_end = args.init_end #'curves/curve52/checkpoint-100.pt'
 num_classes = 10
 
 architecture = getattr(models, args.model)
-curve = getattr(curves, 'PolyChain')
+curve = getattr(curves, args.curve)
 
 model = curves.CurveNet(
             10,
