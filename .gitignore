@@ -34,6 +34,7 @@ stats2/
 stats3/
 curves_linear/
 curves_mnist/
+flows_checkpoints/
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
