@@ -48,7 +48,37 @@
 #
 #python plane.py --dir=plots/LinSwapp256 --data_path=data --dataset=CIFAR10 --model=VGG16 --curve=PolyChain --ckpt=points2plane/LinSwapp256/checkpoint--1.pt
 
-for i in $(seq 3 23);
+#for i in $(seq 1 20);
+#do
+#    python train.py --dir=curves_mnist/LogRegression/curve$i --model=LogRegression --data_path=data --epochs=20 --dataset=MNIST --cuda --seed=$i
+#done
+
+#for i in $(seq 1 20);
+#do
+#    python train.py --dir=curves_mnist/LinearOneLayer/Adam/curve$i --model=LinearOneLayer --data_path=data --epochs=30 --dataset=MNIST --cuda --seed=$i --optimizerAdam
+#done
+#
+#for i in $(seq 1 20);
+#do
+#    python train.py --dir=curves_mnist/LinearOneLayer/LongTraining/curve$i --model=LinearOneLayer --data_path=data --epochs=30 --dataset=MNIST --cuda --seed=$i
+#done
+
+#for i in $(seq 1 20);
+#do
+#    python train.py --dir=curves_mnist/LinearOneLayer/GaussianInit/curve$i --model=LinearOneLayer --data_path=data --epochs=30 --dataset=MNIST --cuda --seed=$i
+#done
+
+#for i in $(seq 20 40);
+#do
+#    python train.py --dir=curves_mnist/LinearOneLayer/Adam/curve$i --model=LinearOneLayer --data_path=data --epochs=30 --dataset=MNIST --cuda --seed=$i --optimizerAdam
+#done
+
+#for i in $(seq 1 20);
+#do
+#    python train.py --dir=curves/LinearOneLayerCF/GaussianInit/curve$i --model=LinearOneLayerCF --data_path=data --epochs=40 --dataset=CIFAR10 --cuda --seed=$i
+#done
+
+for i in $(seq 1 4);
 do
-    python train.py --dir=curves_mnist/LinearOneLayer/curve$i --model=LinearOneLayer --data_path=data --epochs=12 --dataset=MNIST --use_test
+    python train.py --dir=curves/LinearOneLayerCF/AdamGaussianInit/curve$i --model=LinearOneLayerCF --data_path=data --epochs=200 --dataset=CIFAR10 --cuda --seed=$i --lr=0.01
 done

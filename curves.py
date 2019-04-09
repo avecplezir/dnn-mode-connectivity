@@ -50,7 +50,24 @@ class Arc(Module):
         return torch.sin(np.pi*t/2)
 
     def forward(self, t):
+        # print('Arc', t)
         return torch.cat([self.a(t), 1.-self.a(t)-self.b(t), self.b(t)]) #torch.max(self.range.new([0.0]), 1.0 - torch.abs(t_n - self.range))
+
+class Arc2(Module):
+    def __init__(self, num_bends):
+        super(Arc2, self).__init__()
+        self.num_bends = num_bends
+        self.register_buffer('range', torch.arange(0, float(num_bends)))
+
+    def a(self, t):
+        return torch.cos(np.pi*t/2)
+
+    def b(self, t):
+        return torch.sin(np.pi*t/2)
+
+    def forward(self, t):
+        # print('Arc2', t)
+        return torch.cat([self.a(t), 0.*((1.-t)-self.a(t)), 0.*(t-self.b(t)), self.b(t)]) #torch.max(self.range.new([0.0]), 1.0 - torch.abs(t_n - self.range))
 
 
 class CurveModule(Module):

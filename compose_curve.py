@@ -18,12 +18,13 @@ parser = argparse.ArgumentParser(description='Computes values for plane visualiz
 parser.add_argument('--dir', type=str, default='points2plane/new', metavar='DIR',
                     help='training directory (default: /tmp/plane)')
 
-
 parser.add_argument('--ckpt', type=str, default=None, metavar='CKPT',
                     help='checkpoint to eval (default: None)')
 parser.add_argument('--init_start', type=str, default=None, metavar='CKPT',
                     help='checkpoint to init start point (default: None)')
-parser.add_argument('--init_middle', type=str, default=None, metavar='CKPT',
+parser.add_argument('--init_E_start', type=str, default=None, metavar='CKPT',
+                    help='checkpoint to init start point (default: None)')
+parser.add_argument('--init_E_end', type=str, default=None, metavar='CKPT',
                     help='checkpoint to init start point (default: None)')
 parser.add_argument('--init_end', type=str, default=None, metavar='CKPT',
                     help='checkpoint to init end point (default: None)')
@@ -36,29 +37,23 @@ parser.add_argument('--curve', type=str, default=None, metavar='CURVE',
 args = parser.parse_args()
 
 os.makedirs(args.dir, exist_ok=True)
-
-
-d = args.dir
-init_start = args.init_start #'curves/curve50/checkpoint-100.pt'
-init_middle = args.init_middle #'curves/curve51/checkpoint-100.pt'
-init_end = args.init_end #'curves/curve52/checkpoint-100.pt'
 num_classes = 10
 
 architecture = getattr(models, args.model)
 curve = getattr(curves, args.curve)
 
 model = curves.CurveNet(
-            10,
-            curve,
-            architecture.curve,
-            3,
-            True,
-            True,
-            architecture_kwargs=architecture.kwargs,
-            )
+    10,
+    curve,
+    architecture.curve,
+    4,
+    True,
+    True,
+    architecture_kwargs=architecture.kwargs,
+)
 
 base_model = None
-for path, k in [(init_start, 0), (init_middle, 1), (init_end, 2)]:
+for path, k in [(args.init_start, 0), (args.init_E_start, 1), (args.init_E_end, 2), (args.init_end, 3)]:
     if path is not None:
         if base_model is None:
             base_model = architecture.base(num_classes=num_classes, **architecture.kwargs)
@@ -66,10 +61,10 @@ for path, k in [(init_start, 0), (init_middle, 1), (init_end, 2)]:
         print('Loading %s as point #%d' % (path, k))
         base_model.load_state_dict(checkpoint['model_state'])
         model.import_base_parameters(base_model, k)
-            
+
 utils.save_checkpoint(
-                     d,
-                     -1,
-                     model_state=model.state_dict(),
-                     optimizer_state=-1
-                     )
+    args.dir,
+    -1,
+    model_state=model.state_dict(),
+    optimizer_state=-1
+)

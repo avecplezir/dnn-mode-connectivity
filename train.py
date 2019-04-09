@@ -70,6 +70,8 @@ parser.add_argument('--wd', type=float, default=1e-4, metavar='WD',
 parser.add_argument('--seed', type=int, default=1, metavar='S', help='random seed (default: 1)')
 parser.add_argument('--cuda', action='store_true')
 
+parser.add_argument('--optimizerAdam', action='store_true')
+
 args = parser.parse_args()
 
 os.makedirs(args.dir, exist_ok=True)
@@ -142,12 +144,20 @@ def learning_rate_schedule(base_lr, epoch, total_epochs):
 
 criterion = F.cross_entropy
 regularizer = None if args.curve is None else curves.l2_regularizer(args.wd)
-optimizer = torch.optim.SGD(
-    filter(lambda param: param.requires_grad, model.parameters()),
-    lr=args.lr,
-    momentum=args.momentum,
-    weight_decay=args.wd if args.curve is None else 0.0
-)
+
+if args.optimizerAdam:
+    optimizer = torch.optim.Adam(
+        filter(lambda param: param.requires_grad, model.parameters()),
+        lr=args.lr,
+        weight_decay=args.wd if args.curve is None else 0.0
+    )
+else:
+    optimizer = torch.optim.SGD(
+        filter(lambda param: param.requires_grad, model.parameters()),
+        lr=args.lr,
+        momentum=args.momentum,
+        weight_decay=args.wd if args.curve is None else 0.0
+    )
 
 
 start_epoch = 1

@@ -4,7 +4,7 @@ import torch.nn as nn
 import curves
 
 __all__ = [
-    'Linear', 'LinearMNIST', 'LogRegression', 'LinearOneLayer'
+    'Linear', 'LinearMNIST', 'LogRegression', 'LinearOneLayer', 'LinearOneLayerCF'
 ]
 
 
@@ -100,13 +100,21 @@ class LogRegressionCurve(nn.Module):
         return x
 
 class LinearOneLayerBase(nn.Module):
-    def __init__(self, num_classes, in_dim):
+    def __init__(self, num_classes, in_dim, middle_dim):
         super(LinearOneLayerBase, self).__init__()
+        self.in_dim = in_dim
+        self.middle_dim = middle_dim
         self.fc = nn.Sequential(
-            nn.Linear(in_dim, 2000),
+            nn.Linear(in_dim, middle_dim),
             nn.ReLU(True),
-            nn.Linear(2000, num_classes),
+            nn.Linear(middle_dim, num_classes),
         )
+
+        # for m in self.modules():
+        #     if isinstance(m, nn.Linear):
+        #         n = m.in_features
+        #         m.weight.data.normal_(0, math.sqrt(1. / n))
+        #         m.bias.data.zero_()
 
     def forward(self, x):
         x = x.view(x.size(0), -1)
@@ -115,11 +123,11 @@ class LinearOneLayerBase(nn.Module):
 
 
 class LinearOneLayerCurve(nn.Module):
-    def __init__(self, num_classes, fix_points, in_dim):
+    def __init__(self, num_classes, fix_points, in_dim, middle_dim):
         super(LinearOneLayerCurve, self).__init__()
-        self.fc1 = curves.Linear(in_dim, 2000, fix_points=fix_points)
+        self.fc1 = curves.Linear(in_dim, middle_dim, fix_points=fix_points)
         self.relu1 = nn.ReLU(True)
-        self.fc2 = curves.Linear(2000,num_classes, fix_points=fix_points)
+        self.fc2 = curves.Linear(middle_dim,num_classes, fix_points=fix_points)
 
     def forward(self, x, coeffs_t):
 
@@ -158,5 +166,14 @@ class LinearOneLayer:
     base = LinearOneLayerBase
     curve = LinearOneLayerCurve
     kwargs = {
-        'in_dim': 784
+        'in_dim': 784,
+        'middle_dim': 2000
+    }
+
+class LinearOneLayerCF:
+    base = LinearOneLayerBase
+    curve = LinearOneLayerCurve
+    kwargs = {
+        'in_dim': 3072,
+        'middle_dim': 10000
     }
