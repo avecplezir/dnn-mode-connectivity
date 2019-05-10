@@ -51,7 +51,7 @@ for i in range(47, 100):
             model2.load_state_dict(checkpoint['model_state'])
 
             for parameter, p1, p2 in zip(base_model.parameters(), model1.parameters(), model2.parameters()):
-                parameter.data.copy_((p1+p2)/2) #(p1+p2)/2
+                parameter.data.copy_((p1+p2)/2)
 
             par1 = np.concatenate([p.data.cpu().numpy().ravel() for p in model1.parameters()])
             par2 = np.concatenate([p.data.cpu().numpy().ravel() for p in model2.parameters()])
