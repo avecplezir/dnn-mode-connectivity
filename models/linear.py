@@ -109,17 +109,6 @@ class LinearOneLayerBase(nn.Module):
             nn.ReLU(True),
             nn.Linear(middle_dim, num_classes),
         )
-        # for m in self.modules():
-        #     if isinstance(m, nn.Linear):
-        #         n = m.in_features
-        #         m.weight.data.normal_(0, math.sqrt(1. / n))
-        #         m.bias.data.zero_()
-
-        # for m in self.modules():
-        #     if isinstance(m, nn.Linear):
-        #         n = m.in_features
-        #         m.weight.data.normal_(0, math.sqrt(1. / n))
-        #         m.bias.data.zero_()
 
     def forward(self, x):
         x = x.view(x.size(0), -1)
@@ -180,5 +169,5 @@ class LinearOneLayerCF:
     curve = LinearOneLayerCurve
     kwargs = {
         'in_dim': 3072,
-        'middle_dim': 10000
+        'middle_dim': 2000
     }

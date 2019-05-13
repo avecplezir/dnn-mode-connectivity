@@ -80,7 +80,6 @@ with open(os.path.join(args.dir, 'command.sh'), 'w') as f:
     f.write('\n')
 
 if args.cuda:
-
     torch.backends.cudnn.benchmark = True
     torch.manual_seed(args.seed)
     torch.cuda.manual_seed(args.seed)
@@ -146,10 +145,11 @@ criterion = F.cross_entropy
 regularizer = None if args.curve is None else curves.l2_regularizer(args.wd)
 
 if args.optimizerAdam:
+    print("Using Adam optimizer")
     optimizer = torch.optim.Adam(
         filter(lambda param: param.requires_grad, model.parameters()),
         lr=args.lr,
-        # weight_decay=args.wd if args.curve is None else 0.0
+        weight_decay=args.wd if args.curve is None else 0.0
     )
 else:
     optimizer = torch.optim.SGD(

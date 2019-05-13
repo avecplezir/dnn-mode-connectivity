@@ -120,6 +120,14 @@ def test(test_loader, model, criterion, regularizer=None, cuda=False, **kwargs):
         'accuracy': correct * 100.0 / len(test_loader.dataset),
     }
 
+def test_model(model, loaders):
+    criterion = F.cross_entropy
+    regularizer = None
+    train_res = test(loaders['train'], model, criterion, regularizer)
+    test_res = test(loaders['test'], model, criterion, regularizer)
+    print('train results', train_res)
+    print('test results', test_res)
+
 
 
 def predictions(test_loader, model, **kwargs):
