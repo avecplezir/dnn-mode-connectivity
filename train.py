@@ -80,7 +80,6 @@ with open(os.path.join(args.dir, 'command.sh'), 'w') as f:
     f.write('\n')
 
 if args.cuda:
-
     torch.backends.cudnn.benchmark = True
     torch.manual_seed(args.seed)
     torch.cuda.manual_seed(args.seed)

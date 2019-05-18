@@ -130,8 +130,6 @@ def test_model(model, loaders, cuda=False, verbose=True):
         print('test results', test_res)
     return train_res, test_res
 
-
-
 def predictions(test_loader, model, **kwargs):
     model.eval()
     preds = []
