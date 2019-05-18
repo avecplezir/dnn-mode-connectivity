@@ -62,21 +62,22 @@ def loaders(dataset, path, batch_size, num_workers, transform_name, use_test=Fal
     transform = getattr(getattr(Transforms, dataset), transform_name)
     train_set = ds(path, train=True, download=True, transform=transform.train)
 
+    use_test = True
     if use_test:
         print('You are going to run models on the test set. Are you sure?')
         test_set = ds(path, train=False, download=True, transform=transform.test)
-    else:
-        print("Using train (45000) + validation (5000)")
-        print('len', len(train_set.train_data[:-5000]))
-        train_set.train_data = train_set.train_data[:-5000]
-        train_set.train_labels = train_set.train_labels[:-5000]
-
-        test_set = ds(path, train=True, download=True, transform=transform.test)
-        test_set.train = False
-        test_set.test_data = test_set.train_data[-5000:]
-        test_set.test_labels = test_set.train_labels[-5000:]
-        delattr(test_set, 'train_data')
-        delattr(test_set, 'train_labels')
+    # else:
+    #     print("Using train (45000) + validation (5000)")
+    #     print('len', len(train_set.train_data[:-5000]))
+    #     train_set.train_data = train_set.train_data[:-5000]
+    #     train_set.train_labels = train_set.train_labels[:-5000]
+    #
+    #     test_set = ds(path, train=True, download=True, transform=transform.test)
+    #     test_set.train = False
+    #     test_set.test_data = test_set.train_data[-5000:]
+    #     test_set.test_labels = test_set.train_labels[-5000:]
+    #     delattr(test_set, 'train_data')
+    #     delattr(test_set, 'train_labels')
 
     return {
                'train': torch.utils.data.DataLoader(
