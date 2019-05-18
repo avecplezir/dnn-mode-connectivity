@@ -2,7 +2,7 @@ import os
 import torch
 import torchvision
 import torchvision.transforms as transforms
-
+from torch.utils.data.sampler import SubsetRandomSampler
 
 class Transforms:
 
@@ -69,6 +69,11 @@ def loaders(dataset, path, batch_size, num_workers, transform_name, use_test=Fal
     # else:
     #     print("Using train (45000) + validation (5000)")
     #     print('len', len(train_set.train_data[:-5000]))
+    #     indices = list(range(len(train_set)))
+    #     train_idx, valid_idx = indices[:-5000], indices[-5000:]
+    #     train_sampler = SubsetRandomSampler(train_idx)
+    #     valid_sampler = SubsetRandomSampler(valid_idx)
+
     #     train_set.train_data = train_set.train_data[:-5000]
     #     train_set.train_labels = train_set.train_labels[:-5000]
     #
