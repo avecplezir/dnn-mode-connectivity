@@ -72,6 +72,8 @@ parser.add_argument('--cuda', action='store_true')
 
 parser.add_argument('--optimizerAdam', action='store_true')
 
+torch.cuda.set_device(1)
+
 args = parser.parse_args()
 
 os.makedirs(args.dir, exist_ok=True)
