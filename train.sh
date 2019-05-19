@@ -88,7 +88,7 @@
 #    python train.py --dir=curves_mnist/LinearOneLayer/LongTraining/curve$i --model=LinearOneLayer --data_path=data --epochs=30 --dataset=MNIST --cuda --seed=$i
 #done
 
-for i in $(seq 1 20);
+for i in $(seq 1 1);
 do
     python train.py --dir=curves/LinearOneLayer/curve$i --model=LinearOneLayerCF --data_path=data --epochs=400 --dataset=CIFAR10 --cuda --seed=$i
 done
