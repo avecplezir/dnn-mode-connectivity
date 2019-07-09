@@ -72,8 +72,6 @@ parser.add_argument('--cuda', action='store_true')
 
 parser.add_argument('--optimizerAdam', action='store_true')
 
-torch.cuda.set_device(1)
-
 args = parser.parse_args()
 
 os.makedirs(args.dir, exist_ok=True)
@@ -155,7 +153,7 @@ if args.optimizerAdam:
     )
 else:
     optimizer = torch.optim.SGD(
-        filter(lambda param: param.requires_grad, model.parameters()),
+        filter(lambda param: param.requires_grad, list(model.parameters())),
         lr=args.lr,
         momentum=args.momentum,
         weight_decay=args.wd if args.curve is None else 0.0

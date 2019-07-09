@@ -83,23 +83,31 @@
 #    python train.py --dir=curves/LinearOneLayerCF/AdamGaussianInit/curve$i --model=LinearOneLayerCF --data_path=data --epochs=200 --dataset=CIFAR10 --cuda --seed=$i --lr=0.01
 #done
 
-# for i in $(seq 10 20);
-# do
-#     python train.py --dir=curves_mnist/LinearOneLayer/LongTraining/curve$i --model=LinearOneLayer --data_path=data --epochs=30 --dataset=MNIST --cuda --seed=$i
-# done
-
-
-# for i in $(seq 1 20);
-# do
-#     python train.py --dir=curves/LinearOneLayer/curve$i --model=LinearOneLayerCF --data_path=data --epochs=400 --dataset=CIFAR10 --cuda --seed=$i
-# done
-
-for i in $(seq 1 1);
-do
-    python train.py --dir=curves/LinearOneLayer/curve$i --model=LinearOneLayerCF --data_path=data --epochs=400 --dataset=CIFAR10 --cuda --seed=$i
-done
+#for i in $(seq 10 20);
+#do
+#    python train.py --dir=curves_mnist/LinearOneLayer/LongTraining/curve$i --model=LinearOneLayer --data_path=data --epochs=30 --dataset=MNIST --cuda --seed=$i
+#done
+#
+#for i in $(seq 1 20);
+#do
+#    python train.py --dir=curves/LinearOneLayer/curve$i --model=LinearOneLayerCF --data_path=data --epochs=400 --dataset=CIFAR10 --cuda --seed=$i
+#done
 
 
 #python train.py --dir=curves/LinearOneLayer/curve$i --model=LinearOneLayerCF --data_path=data --epochs=100 --dataset=CIFAR10 --cuda --seed=1
 
 #python train.py --dir=curves_mnist/LinearOneLayer/LongTraining/curve20 --model=LinearOneLayer --data_path=data --epochs=30 --dataset=MNIST --cuda --seed=20
+
+
+#python train.py --dir=curves/Linear6/curve1 --model=Linear --data_path=data --epochs=100 --dataset=CIFAR10 --cuda --seed=1
+#python train.py --dir=curves/Linear6/curve2 --model=Linear --data_path=data --epochs=100 --dataset=CIFAR10 --cuda --seed=2
+#
+#python train.py --dir=curves/Linear6NoBias/curve1 --model=LinearNoBias --data_path=data --epochs=100 --dataset=CIFAR10 --cuda --seed=1
+#python train.py --dir=curves/Linear6NoBias/curve2 --model=LinearNoBias --data_path=data --epochs=100 --dataset=CIFAR10 --cuda --seed=2
+#
+#
+#python train.py --dir=curves/Linear3NoBias/curve1 --model=Linear3NoBias --data_path=data --epochs=100 --dataset=CIFAR10 --cuda --seed=1
+#python train.py --dir=curves/Linear3NoBias/curve2 --model=Linear3NoBias --data_path=data --epochs=100 --dataset=CIFAR10 --cuda --seed=2
+
+python train.py --dir=curves/LinearOneLayer60k/curve1 --model=LinearOneLayer60k --data_path=data --epochs=300 --dataset=CIFAR10 --cuda --seed=1
+python train.py --dir=curves/LinearOneLayer60k/curve2 --model=LinearOneLayer60k --data_path=data --epochs=300 --dataset=CIFAR10 --cuda --seed=2
