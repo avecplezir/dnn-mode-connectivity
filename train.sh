@@ -109,9 +109,5 @@
 #python train.py --dir=curves/Linear3NoBias/curve1 --model=Linear3NoBias --data_path=data --epochs=100 --dataset=CIFAR10 --cuda --seed=1
 #python train.py --dir=curves/Linear3NoBias/curve2 --model=Linear3NoBias --data_path=data --epochs=100 --dataset=CIFAR10 --cuda --seed=2
 
-python train.py --dir=curves/LinearOneLayer60k_SL/curve1 --model=LinearOneLayer60k --data_path=data --epochs=300 --dataset=CIFAR10 --cuda --seed=1 --batch_size=1024
-python train.py --dir=curves/LinearOneLayer60k_SL/curve2 --model=LinearOneLayer60k --data_path=data --epochs=300 --dataset=CIFAR10 --cuda --seed=2
-
-
-python train.py --dir=curves/Linear2NoBias/curve1 --model=Linear2NoBias --data_path=data --epochs=300 --dataset=CIFAR10 --cuda --seed=1
-python train.py --dir=curves/Linear2NoBias/curve2 --model=Linear2NoBias --data_path=data --epochs=300 --dataset=CIFAR10 --cuda --seed=2
+python train.py --dir=curves/LinearOneLayer60k/curve1 --model=LinearOneLayer60k --data_path=data --epochs=300 --dataset=CIFAR10 --cuda --seed=1
+python train.py --dir=curves/LinearOneLayer60k/curve2 --model=LinearOneLayer60k --data_path=data --epochs=300 --dataset=CIFAR10 --cuda --seed=2
