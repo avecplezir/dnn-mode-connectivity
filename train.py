@@ -153,7 +153,7 @@ if args.optimizerAdam:
     )
 else:
     optimizer = torch.optim.SGD(
-        filter(lambda param: param.requires_grad, model.parameters()),
+        filter(lambda param: param.requires_grad, list(model.parameters())),
         lr=args.lr,
         momentum=args.momentum,
         weight_decay=args.wd if args.curve is None else 0.0
