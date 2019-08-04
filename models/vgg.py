@@ -51,15 +51,27 @@ class VGGBase(nn.Module):
         self.activation_blocks = activation_blocks
         self.poolings = poolings
 
-        self.classifier = nn.Sequential(
-            nn.Dropout(),
-            nn.Linear(in_classifier_dim, 512),
-            nn.ReLU(inplace=True),
-            nn.Dropout(),
-            nn.Linear(512, 512),
-            nn.ReLU(inplace=True),
-            nn.Linear(512, num_classes),
-        )
+        # self.classifier = nn.Sequential(
+        #     nn.Dropout(),
+        #     nn.Linear(in_classifier_dim, 512),
+        #     nn.ReLU(inplace=True),
+        #     nn.Dropout(),
+        #     nn.Linear(512, 512),
+        #     nn.ReLU(inplace=True),
+        #     nn.Linear(512, num_classes),
+        # )
+
+        self.classifier = nn.ModuleList()
+
+        classifier_layers = [nn.Dropout(),
+                            nn.Linear(in_classifier_dim, 512),
+                            nn.ReLU(inplace=True),
+                            nn.Dropout(),
+                            nn.Linear(512, 512),
+                            nn.ReLU(inplace=True),
+                            nn.Linear(512, num_classes),]
+        self.classifier.extend(classifier_layers)
+
 
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
@@ -68,15 +80,21 @@ class VGGBase(nn.Module):
                 m.bias.data.zero_()
 
 
-    def forward(self, x):
+    def forward(self, x, N=-1):
         for layers, activations, pooling in zip(self.layer_blocks, self.activation_blocks,
                                                 self.poolings):
             for layer, activation in zip(layers, activations):
                 x = layer(x)
                 x = activation(x)
             x = pooling(x)
+
         x = x.view(x.size(0), -1)
-        x = self.classifier(x)
+
+        for i in range(7):
+            x = self.classifier[i](x)
+            if i == N:
+                return x
+
         return x
 
 
