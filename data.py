@@ -18,6 +18,9 @@ class Transforms:
             ])
 
             test = transforms.Compose([
+                # transforms.RandomCrop(32, padding=4),
+                # transforms.CenterCrop(24),
+                # transforms.Pad(4),
                 transforms.ToTensor(),
                 transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
             ])
@@ -55,12 +58,15 @@ class Transforms:
     CIFAR100 = CIFAR10
 
 
-def loaders(dataset, path, batch_size, num_workers, transform_name, use_test=False,
+def loaders(dataset, path, batch_size, num_workers, transform_name, use_test=False, train_random=True,
             shuffle_train=True):
     ds = getattr(torchvision.datasets, dataset)
     path = os.path.join(path, dataset.lower())
     transform = getattr(getattr(Transforms, dataset), transform_name)
-    train_set = ds(path, train=True, download=True, transform=transform.train)
+    if train_random:
+        train_set = ds(path, train=True, download=True, transform=transform.train)
+    else:
+        train_set = ds(path, train=True, download=True, transform=transform.test)
 
     use_test = True
     if use_test:

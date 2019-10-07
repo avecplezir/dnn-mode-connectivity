@@ -8,7 +8,7 @@ import torch.nn as nn
 
 import curves
 
-__all__ = ['VGG16', 'VGG16BN', 'VGG19', 'VGG19BN', 'VGG16MNIST']
+__all__ = ['VGG16', 'VGG16BN', 'VGG19', 'VGG19BN', 'VGG16MNIST', 'VGG16h2k']
 
 config = {
     16: [[64, 64], [128, 128], [256, 256, 256], [512, 512, 512], [512, 512, 512]],
@@ -44,22 +44,35 @@ def make_layers(config, batch_norm=False, fix_points=None, in_channels=3):
 
 
 class VGGBase(nn.Module):
-    def __init__(self, num_classes, depth=16, batch_norm=False, in_channels=3, in_classifier_dim=512):
+    def __init__(self, num_classes, depth=16, batch_norm=False, in_channels=3, in_classifier_dim=512,
+                 hidden_classifier_dim=512):
         super(VGGBase, self).__init__()
         layer_blocks, activation_blocks, poolings = make_layers(config[depth], batch_norm, in_channels=in_channels)
         self.layer_blocks = layer_blocks
         self.activation_blocks = activation_blocks
         self.poolings = poolings
 
-        self.classifier = nn.Sequential(
-            nn.Dropout(),
-            nn.Linear(in_classifier_dim, 512),
-            nn.ReLU(inplace=True),
-            nn.Dropout(),
-            nn.Linear(512, 512),
-            nn.ReLU(inplace=True),
-            nn.Linear(512, num_classes),
-        )
+        # self.classifier = nn.Sequential(
+        #     nn.Dropout(),
+        #     nn.Linear(in_classifier_dim, 512),
+        #     nn.ReLU(inplace=True),
+        #     nn.Dropout(),
+        #     nn.Linear(512, 512),
+        #     nn.ReLU(inplace=True),
+        #     nn.Linear(512, num_classes),
+        # )
+
+        self.classifier = nn.ModuleList()
+
+        classifier_layers = [nn.Dropout(),
+                            nn.Linear(in_classifier_dim, hidden_classifier_dim),
+                            nn.ReLU(inplace=True),
+                            nn.Dropout(),
+                            nn.Linear(hidden_classifier_dim, hidden_classifier_dim),
+                            nn.ReLU(inplace=True),
+                            nn.Linear(hidden_classifier_dim, num_classes),]
+        self.classifier.extend(classifier_layers)
+
 
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
@@ -68,15 +81,23 @@ class VGGBase(nn.Module):
                 m.bias.data.zero_()
 
 
-    def forward(self, x):
+    def forward(self, x, N=-1):
         for layers, activations, pooling in zip(self.layer_blocks, self.activation_blocks,
                                                 self.poolings):
             for layer, activation in zip(layers, activations):
                 x = layer(x)
                 x = activation(x)
+                # print(x.shape)
             x = pooling(x)
+
         x = x.view(x.size(0), -1)
-        x = self.classifier(x)
+        # print('last', x.shape)
+
+        for i in range(7):
+            x = self.classifier[i](x)
+            if i == N:
+                return x
+
         return x
 
 
@@ -127,6 +148,15 @@ class VGGCurve(nn.Module):
 
         return x
 
+
+class VGG16h2k:
+    base = VGGBase
+    curve = VGGCurve
+    kwargs = {
+        'depth': 16,
+        'batch_norm': False,
+        'hidden_classifier_dim': 2000,
+    }
 
 class VGG16:
     base = VGGBase

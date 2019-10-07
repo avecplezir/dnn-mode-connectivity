@@ -58,7 +58,7 @@ parser.add_argument('--resume', type=str, default=None, metavar='CKPT',
 
 parser.add_argument('--epochs', type=int, default=100, metavar='N',
                     help='number of epochs to train (default: 200)')
-parser.add_argument('--save_freq', type=int, default=100, metavar='N',
+parser.add_argument('--save_freq', type=int, default=400, metavar='N',
                     help='save frequency (default: 50)')
 parser.add_argument('--lr', type=float, default=0.01, metavar='LR',
                     help='initial learning rate (default: 0.01)')
@@ -72,7 +72,11 @@ parser.add_argument('--cuda', action='store_true')
 
 parser.add_argument('--optimizerAdam', action='store_true')
 
+
 args = parser.parse_args()
+
+device_id = 'cuda:0'
+torch.cuda.set_device(device_id)
 
 os.makedirs(args.dir, exist_ok=True)
 with open(os.path.join(args.dir, 'command.sh'), 'w') as f:

@@ -23,11 +23,23 @@ class LinearBase(nn.Module):
 
         self.linear_layers.append(nn.Linear(self.dims[-2], self.dims[-1], bias=bias))
 
-    def forward(self, x):
+    def last_layers(self, x, N=-1):
+
+        for i in range(N, len(self.dims) - 2):
+            x = self.linear_layers[i](x)
+            x = self.relu_layers[i](x)
+
+        x = self.linear_layers[-1](x)
+
+        return x
+
+    def forward(self, x, N=-1):
         x = x.view(x.size(0), -1)
         for i in range(len(self.dims) - 2):
             x = self.linear_layers[i](x)
             x = self.relu_layers[i](x)
+            if N == i:
+                return x
 
         x = self.linear_layers[-1](x)
 
