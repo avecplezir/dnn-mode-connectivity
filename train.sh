@@ -130,8 +130,62 @@
 
 #python train.py --dir=curves/VGG16h2k/curve$i --model=VGG16h2k --data_path=data --epochs=400 --dataset=CIFAR10 --cuda --seed=$i
 
+#for i in $(seq 10 9);
+#do
+#    python train.py --dir=curves/VGG16h2k/curve$i --model=VGG16h2k --data_path=data --epochs=400 --dataset=CIFAR10 --cuda --seed=$i
+#done
+
+#for i in $(seq 1 2);
+#do
+#    python train.py --dir=curves/Linear3NoBiasW/curve$i --model=Linear3NoBiasW --data_path=data --epochs=400 --dataset=CIFAR10 --cuda --seed=$i
+#done
+
+# ResNet
+#for i in $(seq 4 7);
+#do
+#    python train.py --dir=curves/PreResNet110/curve$i --model=PreResNet110 --data_path=data --epochs=400 --dataset=CIFAR10 --cuda --seed=$i
+#done
+#
+#for i in $(seq 1 7);
+#do
+#    python train.py --dir=curves/WideResNet28x10/curve$i --model=WideResNet28x10 --data_path=data --epochs=400 --dataset=CIFAR10 --cuda --seed=$i
+#done
+
+# Wide
+#for i in $(seq 1 7);
+#do
+#    python train.py --dir=curves/LinearOneLayer100/curve$i --model=LinearOneLayer100 --data_path=data --epochs=400 --dataset=CIFAR10 --cuda --seed=$i --device=0
+#done
+#
+#
 for i in $(seq 1 7);
 do
-    python train.py --dir=curves/VGG16h2k/curve$i --model=VGG16h2k --data_path=data --epochs=400 --dataset=CIFAR10 --cuda --seed=$i
+    python train.py --dir=curves/LinearOneLayer500/curve$i --model=LinearOneLayer500 --data_path=data --epochs=400 --dataset=CIFAR10 --cuda --seed=$i --device=1
 done
 
+for i in $(seq 1 7);
+do
+    python train.py --dir=curves/LinearOneLayer1000/curve$i --model=LinearOneLayer1000 --data_path=data --epochs=400 --dataset=CIFAR10 --cuda --seed=$i --device=1
+done
+
+#Deep
+#for i in $(seq 1 7);
+#do
+#    python train.py --dir=curves/Linear5NoBias/curve$i --model=Linear5NoBias --data_path=data --epochs=400 --dataset=CIFAR10 --cuda --seed=$i --device=0
+#done
+#
+#
+#for i in $(seq 1 7);
+#do
+#    python train.py --dir=curves/Linear7NoBias/curve$i --model=Linear7NoBias --data_path=data --epochs=400 --dataset=CIFAR10 --cuda --seed=$i --device=0
+#done
+#
+#for i in $(seq 1 7);
+#do
+#    python train.py --dir=curves/Linear9NoBias/curve$i --model=Linear9NoBias --data_path=data --epochs=400 --dataset=CIFAR10 --cuda --seed=$i --device=0
+#done
+
+#for i in $(seq 1 2);
+#do
+#    python train.py --dir=curves/LinearOneLayer/curve$i --model=LinearOneLayerCF --data_path=data --epochs=400 --dataset=CIFAR10 --cuda --seed=$i
+#done

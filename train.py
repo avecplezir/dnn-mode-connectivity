@@ -56,7 +56,7 @@ parser.add_argument('--init_rescale_on', dest='init_rescale', action='store_true
 parser.add_argument('--resume', type=str, default=None, metavar='CKPT',
                     help='checkpoint to resume training from (default: None)')
 
-parser.add_argument('--epochs', type=int, default=100, metavar='N',
+parser.add_argument('--epochs', type=int, default=400, metavar='N',
                     help='number of epochs to train (default: 200)')
 parser.add_argument('--save_freq', type=int, default=400, metavar='N',
                     help='save frequency (default: 50)')
@@ -69,13 +69,14 @@ parser.add_argument('--wd', type=float, default=1e-4, metavar='WD',
 
 parser.add_argument('--seed', type=int, default=1, metavar='S', help='random seed (default: 1)')
 parser.add_argument('--cuda', action='store_true')
+parser.add_argument('--device', type=int, default=1)
 
 parser.add_argument('--optimizerAdam', action='store_true')
 
 
 args = parser.parse_args()
 
-device_id = 'cuda:0'
+device_id = 'cuda:' + str(args.device)
 torch.cuda.set_device(device_id)
 
 os.makedirs(args.dir, exist_ok=True)

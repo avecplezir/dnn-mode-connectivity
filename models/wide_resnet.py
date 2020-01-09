@@ -98,7 +98,7 @@ class WideResNetBase(nn.Module):
 
         return nn.Sequential(*layers)
 
-    def forward(self, x):
+    def forward(self, x, N=-1):
         out = self.conv1(x)
         out = self.layer1(out)
         out = self.layer2(out)
@@ -106,6 +106,9 @@ class WideResNetBase(nn.Module):
         out = F.relu(self.bn1(out))
         out = F.avg_pool2d(out, 8)
         out = out.view(out.size(0), -1)
+        if N == 0:
+            return out
+        # print('out', out.shape)
         out = self.linear(out)
 
         return out

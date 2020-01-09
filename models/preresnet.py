@@ -213,7 +213,7 @@ class PreResNetBase(nn.Module):
 
         return nn.Sequential(*layers)
 
-    def forward(self, x):
+    def forward(self, x, N=-1):
         x = self.conv1(x)
 
         x = self.layer1(x)  # 32x32
@@ -224,6 +224,9 @@ class PreResNetBase(nn.Module):
 
         x = self.avgpool(x)
         x = x.view(x.size(0), -1)
+        if N == 0:
+            return x
+        # print('x', x.shape)
         x = self.fc(x)
 
         return x

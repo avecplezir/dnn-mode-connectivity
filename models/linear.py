@@ -5,7 +5,9 @@ import curves
 
 __all__ = [
     'Linear', 'LinearMNIST', 'LogRegression', 'LinearOneLayer', 'LinearOneLayerCF', 'LinearNoBias',
-    'Linear3NoBias', 'LinearOneLayer60k', 'Linear2NoBias'
+    'Linear3NoBias', 'LinearOneLayer60k', 'Linear2NoBias', 'Linear3NoBiasW',
+    'LinearOneLayer100', 'LinearOneLayer500', 'LinearOneLayer1000',
+    'Linear5NoBias', 'Linear7NoBias', 'Linear9NoBias',
 ]
 
 
@@ -156,6 +158,42 @@ class Linear3NoBias:
         'middle_dim': [2 * 3072, 2000],
     }
 
+class Linear5NoBias:
+    base = LinearBase
+    curve = LinearCurve
+    kwargs = {
+        'in_dim': 3072,
+        'bias': False,
+        'middle_dim': [2 * 3072, 2000, 1000, 1000],
+    }
+
+class Linear7NoBias:
+    base = LinearBase
+    curve = LinearCurve
+    kwargs = {
+        'in_dim': 3072,
+        'bias': False,
+        'middle_dim': [2 * 3072, 2000, 1000, 1000, 1000, 1000],
+    }
+
+class Linear9NoBias:
+    base = LinearBase
+    curve = LinearCurve
+    kwargs = {
+        'in_dim': 3072,
+        'bias': False,
+        'middle_dim': [2 * 3072, 2000, 1000, 1000, 1000, 1000, 1000, 1000],
+    }
+
+class Linear3NoBiasW:
+    base = LinearBase
+    curve = LinearCurve
+    kwargs = {
+        'in_dim': 3072,
+        'bias': False,
+        'middle_dim': [2 * 3072, 2 * 3072],
+    }
+
 class Linear2NoBias:
     base = LinearBase
     curve = LinearCurve
@@ -189,6 +227,30 @@ class LinearOneLayer:
     kwargs = {
         'in_dim': 784,
         'middle_dim': 2000
+    }
+
+class LinearOneLayer100:
+    base = LinearOneLayerBase
+    curve = LinearOneLayerCurve
+    kwargs = {
+        'in_dim': 3072,
+        'middle_dim': 100
+    }
+
+class LinearOneLayer500:
+    base = LinearOneLayerBase
+    curve = LinearOneLayerCurve
+    kwargs = {
+        'in_dim': 3072,
+        'middle_dim': 500
+    }
+
+class LinearOneLayer1000:
+    base = LinearOneLayerBase
+    curve = LinearOneLayerCurve
+    kwargs = {
+        'in_dim': 3072,
+        'middle_dim': 1000
     }
 
 class LinearOneLayer60k:
